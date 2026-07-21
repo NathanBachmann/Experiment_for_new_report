@@ -13,6 +13,11 @@ def get_script_dir():
 
 #Set variables
 script_dir = get_script_dir()
+resources_dir = os.path.join(script_dir, "resources")
+
+# Read logo
+with open(os.path.join(resources_dir, "logo.txt")) as f:
+    logo = f.read().strip()
 
 # Read parameters file
 with open("parameters.txt") as f:
@@ -33,6 +38,7 @@ template = env.get_template("main_report.html")
 html_report = template.render(
     columns=df.columns.tolist(),
     rows=df.values.tolist(),
+    logo=logo,
     parameters=parameters
 )
 

@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head><title>Analysis Report</title></head>
+<head>
+    <title>Analysis Report</title>
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            max-height: 160px;
+        }
+    </style>
+</head>
 <body>
-    <h1><b>Experiment Report</b></h1>
+    <div class="header">
+        <h1><b>Experiment Report</b></h1>
+        {{ logo | safe }}
+    </div>
     <p>This report was generated from Pacbio workflow. The analysis is fully documented <a href="understanding_the_analysis.html" target="_blank">here</a>.</p>
     <pre>{{ parameters }}</pre>
     {% include 'dada2_metrics.html' %}
