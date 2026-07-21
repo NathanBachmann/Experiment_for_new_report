@@ -1,0 +1,56 @@
+<style>
+    table {
+        width: auto;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px 16px;
+        text-align: left;
+    }
+    th {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 24px;
+    }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    tr:hover { background-color: #ddd; }
+    .controls { margin: 10px 0; font-family: Arial, sans-serif; }
+    .hidden { display: none; }
+    button { padding: 5px 15px; margin: 0 5px; cursor: pointer; }
+</style>
+
+<h2>Diversity Profiling Barplots </h2>
+<table>
+    <thead>
+        <tr>
+            <th>Classifier</th>
+            <th>Interactive Barchart</th>
+        </tr>        
+    </thead>
+    <tbody>
+        <tr>
+            <td>Naive Bayes</td>
+            <td><a href="./results/taxonomy_barplot_nb/index.html" target="_blank">View Interactive Report</a></td>
+        </tr>
+        <tr>
+            <td>VSEARCH</td>
+            <td><a href="./results/taxonomy_barplot_vsearch/index.html" target="_blank">View Interactive Report</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Kraken Chart</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Kraken Report</th>
+            <th>Kraken Interactive Report</th>
+        </tr>        
+    </thead>
+    <tbody>
+        <tr>
+            <td>Kraken</td>
+            <td><a href="../work/18/f109a672e53443f7ea52da9aabaae8/krona_html/index.html" target="_blank">View Interactive Report</a></td>
+        </tr>
+    </tbody>
