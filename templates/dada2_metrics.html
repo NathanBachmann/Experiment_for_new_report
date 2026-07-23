@@ -9,15 +9,43 @@
         text-align: left;
     }
     th {
-        background-color: #4CAF50;
+        background-color: #E89149;
         color: white;
         padding: 8px 24px;
+        white-space: nowrap;
     }
     tr:nth-child(even) { background-color: #f2f2f2; }
     tr:hover { background-color: #ddd; }
     .controls { margin: 10px 0; font-family: Arial, sans-serif; }
     .hidden { display: none; }
     button { padding: 5px 15px; margin: 0 5px; cursor: pointer; }
+    .help-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: white;
+        color: #4CAF50;
+        text-align: center;
+        font-size: 12px;
+        line-height: 16px;
+        cursor: help;
+        margin-left: 5px;
+        position: relative;
+    }
+    .help-icon:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 20px;
+        top: -5px;
+        background: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-size: 12px;
+        z-index: 100;
+    }
 </style>
 
 <h2>DADA2 QC metrics</h2>
@@ -38,7 +66,11 @@
     <thead>
         <tr>
             {% for column in columns %}
-            <th>{{ column }}</th>
+            <th>{{ column }}
+                {% if column in dada_column_descriptions %}
+                <span class="help-icon" data-tooltip="{{ dada_column_descriptions[column] }}">?</span>
+                {% endif %}
+            </th>
             {% endfor %}
         </tr>
     </thead>

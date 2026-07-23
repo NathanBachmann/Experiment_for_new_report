@@ -34,12 +34,23 @@ df.head()
 env = Environment(loader=FileSystemLoader(os.path.join(script_dir, "templates")))
 template = env.get_template("main_report.html")
 
+dada_column_descriptions = {
+    "sample-id": "Unique sample identifier",
+    "input": "Number of raw input reads",
+    "filtered": "Reads remaining after quality filtering",
+    "percentage of input passed filter": "Percentage of input reads that passed quality filtering",
+    "denoised": "Reads after DADA2 denoising",
+    "non-chimeric": "Reads remaining after chimera removal",
+    "percentage of input non-chimeric": "Percentage of input reads that are non-chimeric"
+}
+
 # Render the template with the DataFrame data
 html_report = template.render(
     columns=df.columns.tolist(),
     rows=df.values.tolist(),
     logo=logo,
-    parameters=parameters
+    parameters=parameters,
+    dada_column_descriptions=dada_column_descriptions
 )
 
 # Save the rendered HTML to a file
