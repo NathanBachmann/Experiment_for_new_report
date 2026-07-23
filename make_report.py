@@ -19,9 +19,21 @@ resources_dir = os.path.join(script_dir, "resources")
 with open(os.path.join(resources_dir, "logo.txt")) as f:
     logo = f.read().strip()
 
+# Read project Information
+with open("project_info.txt") as f:
+    project_info = f.read()
+
+# Read in analysis summary
+with open("analysis_summary.txt") as f:
+    analysis_summary = [line.strip() for line in f.readlines()]
+
 # Read parameters file
 with open("parameters.txt") as f:
     parameters = f.read()
+
+# Read software versions
+with open("software_versions.txt") as f:
+    software_versions = f.read()
 
 # Load the stats.tsv file into a DataFrame
 file_path = "results/stats.tsv"  # Replace with the path to your .tsv file
@@ -49,8 +61,11 @@ html_report = template.render(
     columns=df.columns.tolist(),
     rows=df.values.tolist(),
     logo=logo,
+    project_info=project_info,
+    analysis_summary=analysis_summary,
     parameters=parameters,
-    dada_column_descriptions=dada_column_descriptions
+    dada_column_descriptions=dada_column_descriptions,
+    software_versions=software_versions
 )
 
 # Save the rendered HTML to a file

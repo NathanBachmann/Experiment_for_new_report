@@ -7,6 +7,7 @@
         border: 1px solid #ddd;
         padding: 8px 16px;
         text-align: left;
+        white-space: nowrap;
     }
     th {
         background-color: #E89149;
@@ -47,37 +48,62 @@
     }
 </style>
 
-<h2>Diversity Profiling Barplots </h2>
-<table>
-    <thead>
-        <tr>
-            <th>Classifier</th>
-            <th>Interactive Barchart</th>
-        </tr>        
-    </thead>
-    <tbody>
-        <tr>
-            <td>Naive Bayes <span class="help-icon" data-tooltip="Taxonomy classified using sklearn Naive Bayes classifier">?</span></td>
-            <td><a href="./results/taxonomy_barplot_nb/index.html" target="_blank">View Barplot</a></td>
-        </tr>
-        <tr>
-            <td>VSEARCH <span class="help-icon" data-tooltip="Taxonomy classified using VSEARCH global alignment">?</span></td>
-            <td><a href="./results/taxonomy_barplot_vsearch/index.html" target="_blank">View Barplot</a></td>
-        </tr>
-    </tbody>
-</table>
+<div style="display: flex; gap: 40px;">
+    <div>
+        <h2>Diversity Profiling Barplots </h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Classifier</th>
+                    <th>Interactive Barchart</th>
+                </tr>        
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Naive Bayes <span class="help-icon" data-tooltip="Taxonomy classified using sklearn Naive Bayes classifier">?</span></td>
+                    <td><a href="./results/taxonomy_barplot_nb/index.html" target="_blank">View Barplot</a></td>
+                </tr>
+                <tr>
+                    <td>VSEARCH <span class="help-icon" data-tooltip="Taxonomy classified using VSEARCH global alignment">?</span></td>
+                    <td><a href="./results/taxonomy_barplot_vsearch/index.html" target="_blank">View Barplot</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-<h2>Kraken Chart</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Kraken Report</th>
-            <th>Kraken Interactive Report</th>
-        </tr>        
-    </thead>
-    <tbody>
-        <tr>
-            <td>Kraken <span class="help-icon" data-tooltip="Taxonomy classified using Kraken2 k-mer based approach">?</span></td>
-            <td><a href="../work/18/f109a672e53443f7ea52da9aabaae8/krona_html/index.html" target="_blank">View Chart</a></td>
-        </tr>
-    </tbody>
+    <div>
+        <h2>Kraken Chart</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Kraken Report</th>
+                    <th>Kraken Interactive Report</th>
+                </tr>        
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Kraken <span class="help-icon" data-tooltip="Taxonomy classified using Kraken2 k-mer based approach">?</span></td>
+                    <td><a href="../work/18/f109a672e53443f7ea52da9aabaae8/krona_html/index.html" target="_blank">View Chart</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>Rarefaction Curve</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rarefaction Curve</th>
+                    <th>Interactive Rarefaction Curve</th>
+                </tr>        
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rarefaction Curve <span class="help-icon" data-tooltip="Rarefaction curve showing the number of observed ASVs at different sequencing depths">?</span></td>
+                    <td><a href="./results/alpha-rarefaction-curves/index.html" target="_blank">View Rarefaction Curve</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

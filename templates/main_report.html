@@ -17,6 +17,40 @@
         .logo {
             max-height: 160px;
         }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .param-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .param-btn:hover {
+            background-color: #1976D2;
+        }
     </style>
 </head>
 <body>
@@ -24,9 +58,38 @@
         <h1><b>Experiment Report</b></h1>
         {{ logo | safe }}
     </div>
-    <p>This report was generated from Pacbio workflow. The analysis is fully documented <a href="understanding_the_analysis.html" target="_blank">here</a>.</p>
-    <pre>{{ parameters }}</pre>
-    {% include 'dada2_metrics.html' %}
+    <pre style="font-size: 18px;">{{ project_info }}</pre>
+    <p style="font-size: 18px;">This report was generated from Pacbio workflow. The analysis is fully documented <a href="understanding_the_analysis.html" target="_blank">here</a>.</p>
+    <h3>Analysis Summary</h3>
+    <ul style="font-size: 16px;">
+        {% for line in analysis_summary %}
+            {% if line %}
+            <li>{{ line }}</li>
+            {% else %}
+            <li style="list-style: none; height: 10px;"></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <button class="param-btn" onclick="document.getElementById('paramModal').style.display='block'">Workflow Parameters</button>
+    <button class="param-btn" onclick="document.getElementById('swModal').style.display='block'">Software Versions</button>
+    
+    <div id="paramModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('paramModal').style.display='none'">&times;</span>
+            <h3>Workflow Parameters</h3>
+            <pre>{{ parameters }}</pre>
+        </div>
+    </div>
+
+    <div id="swModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('swModal').style.display='none'">&times;</span>
+            <h3>Software Versions</h3>
+            <pre>{{ software_versions }}</pre>
+        </div>
+    </div>
+
     {% include 'diversity_barplots.html' %}
+    {% include 'dada2_metrics.html' %}
 </body>
 </html>
