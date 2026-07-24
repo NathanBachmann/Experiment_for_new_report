@@ -13,6 +13,14 @@
         color: white;
         padding: 8px 24px;
         white-space: nowrap;
+        cursor: pointer;
+    }
+    th .sort-arrows {
+        margin-left: 5px;
+        font-size: 10px;
+    }
+    th .sort-arrows .active {
+        color: #FFD700;
     }
     tr:nth-child(even) { background-color: #f2f2f2; }
     tr:hover { background-color: #ddd; }
@@ -66,10 +74,15 @@
     <thead>
         <tr>
             {% for column in columns %}
-            <th>{{ column }}
+            <th onclick="sortTable({{ loop.index0 }})">
+                {{ column }}
                 {% if column in dada_column_descriptions %}
                 <span class="help-icon" data-tooltip="{{ dada_column_descriptions[column] }}">?</span>
                 {% endif %}
+                <span class="sort-arrows">
+                    <span id="arrow-up-{{ loop.index0 }}">&#9650;</span>
+                    <span id="arrow-down-{{ loop.index0 }}">&#9660;</span>
+                </span>
             </th>
             {% endfor %}
         </tr>
@@ -92,6 +105,51 @@
 
 <script>
     var currentPage = 1;
+    var sortDirection = {};
+
+    function sortTable(colIndex) {
+        var table = document.getElementById('dataTable');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+
+        // Toggle direction
+        if (sortDirection[colIndex] === 'asc') {
+            sortDirection[colIndex] = 'desc';
+        } else {
+            sortDirection[colIndex] = 'asc';
+        }
+        var dir = sortDirection[colIndex];
+
+        rows.sort(function(a, b) {
+            var aVal = a.getElementsByTagName('td')[colIndex].textContent.trim();
+            var bVal = b.getElementsByTagName('td')[colIndex].textContent.trim();
+            var aNum = parseFloat(aVal);
+            var bNum = parseFloat(bVal);
+
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return dir === 'asc' ? aNum - bNum : bNum - aNum;
+            }
+            return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        rows.forEach(function(row) { tbody.appendChild(row); });
+
+        // Reset all arrows
+        var allUp = document.querySelectorAll('[id^="arrow-up-"]');
+        var allDown = document.querySelectorAll('[id^="arrow-down-"]');
+        allUp.forEach(function(el) { el.classList.remove('active'); });
+        allDown.forEach(function(el) { el.classList.remove('active'); });
+
+        // Highlight active arrow
+        if (dir === 'asc') {
+            document.getElementById('arrow-up-' + colIndex).classList.add('active');
+        } else {
+            document.getElementById('arrow-down-' + colIndex).classList.add('active');
+        }
+
+        currentPage = 1;
+        renderPage();
+    }
 
     function updateTable() {
         currentPage = 1;
