@@ -5,6 +5,7 @@ from jinja2 import Environment, FileSystemLoader, Template
 from pathlib import Path
 import os
 import shutil
+import configparser
 
 #functions
 def get_script_dir():
@@ -14,6 +15,9 @@ def get_script_dir():
 #Set variables
 script_dir = get_script_dir()
 resources_dir = os.path.join(script_dir, "resources")
+
+config = configparser.ConfigParser()
+config.read(os.path.join(script_dir, "help_descriptions.ini"))
 
 # Read logo
 with open(os.path.join(resources_dir, "logo.txt")) as f:
@@ -46,15 +50,7 @@ df.head()
 env = Environment(loader=FileSystemLoader(os.path.join(script_dir, "templates")))
 template = env.get_template("main_report.html")
 
-dada_column_descriptions = {
-    "sample-id": "Unique sample identifier",
-    "input": "Number of raw input reads",
-    "filtered": "Reads remaining after quality filtering",
-    "percentage of input passed filter": "Percentage of input reads that passed quality filtering",
-    "denoised": "Reads after DADA2 denoising",
-    "non-chimeric": "Reads remaining after chimera removal",
-    "percentage of input non-chimeric": "Percentage of input reads that are non-chimeric"
-}
+dada_column_descriptions = dict(config["dada_column_descriptions"])
 
 # Render the template with the DataFrame data
 html_report = template.render(
