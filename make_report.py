@@ -46,6 +46,10 @@ df = pd.read_csv(file_path, sep='\t')
 # Preview the first few rows of the DataFrame
 df.head()
 
+# Load the top ASV table
+file_path = "results/top_50_nb.tsv" 
+top_asv = pd.read_csv(file_path, sep='\t')
+
 # Load template
 env = Environment(loader=FileSystemLoader(os.path.join(script_dir, "templates")))
 template = env.get_template("main_report.html")
@@ -61,7 +65,9 @@ html_report = template.render(
     analysis_summary=analysis_summary,
     parameters=parameters,
     dada_column_descriptions=dada_column_descriptions,
-    software_versions=software_versions
+    software_versions=software_versions,
+    top_asv_columns=top_asv.columns.tolist(),
+    top_asv_rows=top_asv.values.tolist()
 )
 
 # Save the rendered HTML to a file

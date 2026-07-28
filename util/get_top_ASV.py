@@ -18,7 +18,8 @@ top_n = args.top
 with open(asv_table, 'r') as file:
     lines = file.readlines()
 
-header = lines[0]
+header = lines[0].strip('\n').split('\t')
+sample_ids = '\t'.join(header[4:])
 data = []
 
 #main loop - calculates the total frequency for each ASV
@@ -34,6 +35,7 @@ for line in lines[2:]:
 #store the total frequency values from largest to smallest
 data.sort(reverse=True, key=lambda x: x[3])
 
+print(f"ASV\tDomain\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\t{sample_ids}")
 for asv in data[:top_n]:
     print(f"{asv[0]}\t{asv[1]}\t{asv[2]}")
 

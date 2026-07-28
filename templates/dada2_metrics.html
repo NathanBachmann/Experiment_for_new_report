@@ -58,34 +58,40 @@
         font-size: 12px;
         z-index: 100;
     }
+    .table-scroll {
+        overflow-x: auto;
+        width: 1600px;
+        max-width: 95vw;
+        margin: 10px 0;
+    }
 </style>
 
 <h2>DADA2 QC metrics</h2>
 <div class="controls">
-    <label for="search">Search sample-id: </label>
-    <input type="text" id="search" onkeyup="searchTable()" placeholder="Type to search...">
+    <label for="search-dada">Search sample-id: </label>
+    <input type="text" id="search-dada" onkeyup="searchTable('dada')" placeholder="Type to search...">
     &nbsp;&nbsp;
-    <label for="entries">Show entries: </label>
-    <select id="entries" onchange="updateTable()">
+    <label for="entries-dada">Show entries: </label>
+    <select id="entries-dada" onchange="updateTable('dada')">
         <option value="10">10</option>
         <option value="20">20</option>
         <option value="50">50</option>
         <option value="100">100</option>
     </select>
-    <span id="info"></span>
+    <span id="info-dada"></span>
 </div>
-<table id="dataTable">
+<table id="table-dada">
     <thead>
         <tr>
             {% for column in columns %}
-            <th onclick="sortTable({{ loop.index0 }})">
+            <th onclick="sortTable('dada', {{ loop.index0 }})">
                 {{ column }}
                 {% if column in dada_column_descriptions %}
                 <span class="help-icon" data-tooltip="{{ dada_column_descriptions[column] }}">?</span>
                 {% endif %}
                 <span class="sort-arrows">
-                    <span id="arrow-up-{{ loop.index0 }}">&#9650;</span>
-                    <span id="arrow-down-{{ loop.index0 }}">&#9660;</span>
+                    <span id="arrow-up-dada-{{ loop.index0 }}">&#9650;</span>
+                    <span id="arrow-down-dada-{{ loop.index0 }}">&#9660;</span>
                 </span>
             </th>
             {% endfor %}
@@ -102,27 +108,68 @@
     </tbody>
 </table>
 <div class="controls">
-    <button onclick="prevPage()">Previous</button>
-    <span id="pageInfo"></span>
-    <button onclick="nextPage()">Next</button>
+    <button onclick="prevPage('dada')">Previous</button>
+    <span id="pageInfo-dada"></span>
+    <button onclick="nextPage('dada')">Next</button>
+</div>
+
+<h2>Top 50 ASVs (Naive Bayes Classifier)</h2>
+<div class="controls">
+    <label for="search-asvnb">Search ASV: </label>
+    <input type="text" id="search-asvnb" onkeyup="searchTable('asvnb')" placeholder="Type to search...">
+    &nbsp;&nbsp;
+    <label for="entries-asvnb">Show entries: </label>
+    <select id="entries-asvnb" onchange="updateTable('asvnb')">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+    </select>
+    <span id="info-asvnb"></span>
+</div>
+<div class="table-scroll">
+<table id="table-asvnb">
+    <thead>
+        <tr>
+            {% for column in top_asv_columns %}
+            <th onclick="sortTable('asvnb', {{ loop.index0 }})">
+                {{ column }}
+                <span class="sort-arrows">
+                    <span id="arrow-up-asvnb-{{ loop.index0 }}">&#9650;</span>
+                    <span id="arrow-down-asvnb-{{ loop.index0 }}">&#9660;</span>
+                </span>
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in top_asv_rows %}
+        <tr>
+            {% for value in row %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="controls">
+    <button onclick="prevPage('asvnb')">Previous</button>
+    <span id="pageInfo-asvnb"></span>
+    <button onclick="nextPage('asvnb')">Next</button>
 </div>
 
 <script>
-    var currentPage = 1;
-    var sortDirection = {};
+    var pageState = { dada: 1, asvnb: 1 };
+    var sortState = { dada: {}, asvnb: {} };
 
-    function sortTable(colIndex) {
-        var table = document.getElementById('dataTable');
-        var tbody = table.querySelector('tbody');
-        var rows = Array.from(tbody.querySelectorAll('tr'));
+    function sortTable(key, colIndex) {
+        var tbody = document.querySelector('#table-' + key + ' tbody');
+        var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
 
         // Toggle direction
-        if (sortDirection[colIndex] === 'asc') {
-            sortDirection[colIndex] = 'desc';
-        } else {
-            sortDirection[colIndex] = 'asc';
-        }
-        var dir = sortDirection[colIndex];
+        sortState[key][colIndex] = sortState[key][colIndex] === 'asc' ? 'desc' : 'asc';
+        var dir = sortState[key][colIndex];
 
         rows.sort(function(a, b) {
             var aVal = a.getElementsByTagName('td')[colIndex].textContent.trim();
@@ -138,87 +185,83 @@
 
         rows.forEach(function(row) { tbody.appendChild(row); });
 
-        // Reset all arrows
-        var allUp = document.querySelectorAll('[id^="arrow-up-"]');
-        var allDown = document.querySelectorAll('[id^="arrow-down-"]');
-        allUp.forEach(function(el) { el.classList.remove('active'); });
-        allDown.forEach(function(el) { el.classList.remove('active'); });
+        // Reset arrows for this table only
+        document.querySelectorAll('[id^="arrow-up-' + key + '-"], [id^="arrow-down-' + key + '-"]')
+            .forEach(function(el) { el.classList.remove('active'); });
 
         // Highlight active arrow
-        if (dir === 'asc') {
-            document.getElementById('arrow-up-' + colIndex).classList.add('active');
-        } else {
-            document.getElementById('arrow-down-' + colIndex).classList.add('active');
-        }
+        var arrowId = 'arrow-' + (dir === 'asc' ? 'up-' : 'down-') + key + '-' + colIndex;
+        document.getElementById(arrowId).classList.add('active');
 
-        currentPage = 1;
-        renderPage();
+        pageState[key] = 1;
+        renderPage(key);
     }
 
-    function updateTable() {
-        currentPage = 1;
-        renderPage();
+    function updateTable(key) {
+        pageState[key] = 1;
+        renderPage(key);
     }
 
-    function searchTable() {
-        var query = document.getElementById('search').value.toLowerCase();
-        var rows = document.querySelectorAll('#dataTable tbody tr');
-        for (var i = 0; i < rows.length; i++) {
-            var firstCell = rows[i].getElementsByTagName('td')[0];
-            if (firstCell) {
-                var text = firstCell.textContent.toLowerCase();
-                rows[i].setAttribute('data-filtered', text.indexOf(query) === -1 ? 'true' : 'false');
-            }
-        }
-        currentPage = 1;
-        renderPage();
+    function searchTable(key) {
+        var query = document.getElementById('search-' + key).value.toLowerCase();
+        var rows = document.querySelectorAll('#table-' + key + ' tbody tr');
+        rows.forEach(function(row) {
+            var firstCell = row.getElementsByTagName('td')[0];
+            var text = firstCell ? firstCell.textContent.toLowerCase() : '';
+            row.setAttribute('data-filtered', text.indexOf(query) === -1 ? 'true' : 'false');
+        });
+        pageState[key] = 1;
+        renderPage(key);
     }
 
-    function renderPage() {
-        var entries = parseInt(document.getElementById('entries').value);
-        var allRows = document.querySelectorAll('#dataTable tbody tr');
+    function renderPage(key) {
+        var entries = parseInt(document.getElementById('entries-' + key).value);
+        var allRows = document.querySelectorAll('#table-' + key + ' tbody tr');
         var visibleRows = [];
-        for (var i = 0; i < allRows.length; i++) {
-            if (allRows[i].getAttribute('data-filtered') === 'true') {
-                allRows[i].classList.add('hidden');
+
+        allRows.forEach(function(row) {
+            if (row.getAttribute('data-filtered') === 'true') {
+                row.classList.add('hidden');
             } else {
-                visibleRows.push(allRows[i]);
+                visibleRows.push(row);
             }
-        }
+        });
+
         var totalRows = visibleRows.length;
         var totalPages = Math.ceil(totalRows / entries) || 1;
-        var start = (currentPage - 1) * entries;
+        var start = (pageState[key] - 1) * entries;
         var end = start + entries;
 
-        for (var i = 0; i < visibleRows.length; i++) {
+        visibleRows.forEach(function(row, i) {
             if (i >= start && i < end) {
-                visibleRows[i].classList.remove('hidden');
+                row.classList.remove('hidden');
             } else {
-                visibleRows[i].classList.add('hidden');
+                row.classList.add('hidden');
             }
-        }
+        });
 
-        document.getElementById('info').textContent =
+        document.getElementById('info-' + key).textContent =
             'Showing ' + (totalRows > 0 ? start + 1 : 0) + ' to ' + Math.min(end, totalRows) + ' of ' + totalRows + ' entries';
-        document.getElementById('pageInfo').textContent =
-            'Page ' + currentPage + ' of ' + totalPages;
+        document.getElementById('pageInfo-' + key).textContent =
+            'Page ' + pageState[key] + ' of ' + totalPages;
     }
 
-    function nextPage() {
-        var entries = parseInt(document.getElementById('entries').value);
-        var totalRows = document.querySelectorAll('#dataTable tbody tr').length;
-        if (currentPage < Math.ceil(totalRows / entries)) {
-            currentPage++;
-            renderPage();
+    function nextPage(key) {
+        var entries = parseInt(document.getElementById('entries-' + key).value);
+        var totalRows = document.querySelectorAll('#table-' + key + ' tbody tr').length;
+        if (pageState[key] < Math.ceil(totalRows / entries)) {
+            pageState[key]++;
+            renderPage(key);
         }
     }
 
-    function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            renderPage();
+    function prevPage(key) {
+        if (pageState[key] > 1) {
+            pageState[key]--;
+            renderPage(key);
         }
     }
 
-    updateTable();
+    updateTable('dada');
+    updateTable('asvnb');
 </script>
